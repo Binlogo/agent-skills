@@ -30,6 +30,17 @@ toward a Linear-like level of polish: calm density, restrained chrome, native
 Apple platform feel, accessibility, and visual QA. Use when building or
 reviewing Apple-platform UI.
 
+### native-feel-desktop
+
+Design cross-platform desktop apps (macOS + Windows) that feel native: four-layer
+architecture, WebKit/WebView2 pitfalls, typed IPC, and ship-readiness audit.
+Distilled from [yetone/native-feel-skill](https://github.com/yetone/native-feel-skill).
+Use when choosing Electron vs native shell, building launchers, or auditing native feel.
+
+```sh
+npx skills add Binlogo/agent-skills/native-feel-desktop
+```
+
 ## Authoring
 
 Conventions for adding or editing skills live in [`AGENTS.md`](AGENTS.md).
