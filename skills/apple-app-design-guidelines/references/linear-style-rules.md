@@ -1,6 +1,6 @@
-# Linear-style Rules
+# Linear and Things 3-style Rules
 
-Use these rules to approximate the qualities that make Linear and Linear Mobile feel refined. Do not copy surface aesthetics blindly.
+Use these rules to approximate the qualities that make Linear, Linear Mobile, and Things 3 feel refined. Do not copy surface aesthetics blindly.
 
 ## Product principle
 
@@ -22,6 +22,23 @@ Bad default mobile candidates:
 - prolonged document authoring
 - admin-heavy configuration
 - workflows needing many simultaneous panes
+
+Things 3 is a focused productivity experience. It makes task capture and review feel calm by hiding detail until it is useful.
+
+Good Things-style candidates:
+
+- quick task capture
+- clean task or note composition
+- focused daily review
+- progressive disclosure for metadata
+- completion or positive-state feedback
+
+Bad default Things-style candidates:
+
+- decorative dashboards
+- color-heavy status boards
+- complex multi-step admin flows
+- dense analytics views
 
 ## Visual principles
 
@@ -76,7 +93,26 @@ Bad density:
 - every row has all controls visible
 - inconsistent baseline alignment
 
-### Use restrained color
+### Make calm useful, not vague
+
+Things-like UI is calm because the hierarchy is clear, not because everything is pale.
+
+Prefer:
+
+- warm-neutral surfaces with subtle contrast
+- clear task titles and readable metadata
+- one obvious next action
+- optional detail revealed on demand
+- completion feedback that is satisfying but brief
+
+Avoid:
+
+- oversized whitespace that hides structure
+- low-contrast text pretending to be quiet
+- empty-state illustration as decoration
+- visible metadata fields before they are needed
+
+### Use restrained semantic color
 
 Use accent color for:
 
@@ -84,8 +120,11 @@ Use accent color for:
 - current selection
 - important status
 - focused state
+- completion or positive-state feedback
 
 Do not use accent color for decoration. Prefer warm neutral grays and semantic colors that work in light/dark mode.
+
+Things 3's green is a completion/positive-state cue, not a global brand accent. If the platform has a system accent color, respect it.
 
 ### Typography
 
@@ -97,6 +136,7 @@ Typical direction:
 - row title: medium weight
 - metadata: smaller, lower opacity
 - status labels: compact, semantic, not badge-heavy
+- body copy: calm, short, and readable
 
 ### Motion
 
@@ -107,6 +147,7 @@ Motion should explain continuity or state change:
 - selection change
 - navigation transition
 - inline status update
+- task completion
 
 Avoid ornamental animation. Respect reduced motion.
 
@@ -123,7 +164,10 @@ Check:
 - Does the UI still work with large text?
 - Does dark mode avoid pure black/white harshness?
 - Are empty states useful, not decorative filler?
+- Does semantic color communicate state rather than brand?
 
 ## Decision rule
 
 If a design choice increases visual drama but does not improve orientation, speed, confidence, or task completion, remove it.
+
+If a design choice adds calm but makes hierarchy, density, or action less clear, tighten it.

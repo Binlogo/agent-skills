@@ -1,6 +1,6 @@
 ---
 name: native-feel-desktop
-description: "Design and build cross-platform desktop apps (macOS + Windows) that feel indistinguishable from native: four-layer architecture (native shell + system WebView + Node + Rust), WebKit/WebView2 survival guide, typed IPC, memory accounting, and native UI conventions. Distilled from Raycast 2.0's public deep-dive. Use when choosing Electron vs Tauri vs native shell, building launchers, global-hotkey utilities, system-tray apps, WKWebView/WebView2 wrappers, near-native performance, or auditing whether an app truly feels native."
+description: "Design and build cross-platform desktop apps (macOS + Windows) that feel indistinguishable from native: four-layer architecture (native shell + system WebView + Node + Rust), WebKit/WebView2 survival guide, typed IPC, memory accounting, native UI conventions, and Linear/Things 3-inspired product design. Distilled from Raycast 2.0's public deep-dive. Use when choosing Electron vs Tauri vs native shell, building launchers, global-hotkey utilities, system-tray apps, WKWebView/WebView2 wrappers, near-native performance, restrained dense desktop UI, or auditing whether an app truly feels native."
 ---
 
 # Native-Feel Desktop
@@ -19,6 +19,7 @@ Distilled from [yetone/native-feel-skill](https://github.com/yetone/native-feel-
    - Memory numbers / Activity Monitor → `references/05-memory-truths.md`
    - "Feels like a webpage" audit → `references/06-native-conventions.md`
    - Raycast shipping evidence → `references/07-evidence-raycast.md`
+   - Dense, restrained product design → `references/08-product-design.md`
 3. **Before recommending this stack** — run `references/decision-tree.md`. Rule it OUT when it doesn't fit.
 4. **Before claiming "feels native"** — run `references/ship-readiness.md` (75-item audit).
 
@@ -35,6 +36,7 @@ A native-feel cross-platform desktop app is a **native shell** (Swift/AppKit on 
 - **"400 MB is too much"** → Probably wrong measurement. See `references/05-memory-truths.md` first.
 - **"Hand-write IPC types per language"** → Drift within a sprint. Use UniFFI or a single IDL. See `references/04-ipc-contract.md`.
 - **`cursor: pointer` on rows** → Telegraphs web app. See `references/06-native-conventions.md`.
+- **"Make it look like Linear/Things"** → Brand skinning is not native feel. Borrow density, hierarchy, restraint, and semantic color from `references/08-product-design.md`.
 
 ## Output style
 

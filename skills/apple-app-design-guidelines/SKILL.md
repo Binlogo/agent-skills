@@ -1,11 +1,11 @@
 ---
 name: apple-app-design-guidelines
-description: "Review, design, and refine native iOS/macOS SwiftUI or AppKit/UIKit interfaces toward a Linear-like level of polish: calm density, restrained chrome, native Apple platform feel, accessibility, visual QA, and coding-agent-safe UI iteration. Use when building or reviewing iOS/macOS apps, SwiftUI views, native UI polish, Linear Mobile/Linear-style interfaces, Apple HIG compliance, screenshot-based UI critique, or maker/checker design review for coding agents."
+description: "Review, design, and refine native iOS/iPadOS/macOS SwiftUI or AppKit/UIKit interfaces toward Linear-like density and Things 3-like calm: restrained chrome, warm-neutral hierarchy, sparse semantic color, native Apple platform feel, accessibility, visual QA, and coding-agent-safe UI iteration. Use when building or reviewing Apple apps, SwiftUI views, native UI polish, Linear Mobile/Linear-style or Things 3-inspired productivity interfaces, Apple HIG compliance, screenshot-based UI critique, or maker/checker design review for coding agents."
 ---
 
-# Linear-style Apple App Design
+# Linear and Things-style Apple App Design
 
-Use this skill to constrain coding agents building native iOS/macOS UI. The goal is not to imitate Linear superficially; it is to produce **native, fast, calm, dense, legible, and disciplined** Apple-platform software.
+Use this skill to constrain coding agents building native iOS/iPadOS/macOS UI. The goal is not to imitate Linear or Things 3 superficially; it is to produce **native, fast, calm, dense, legible, and disciplined** Apple-platform software.
 
 ## Operating model
 
@@ -13,7 +13,7 @@ Default to an audit-and-iteration loop:
 
 1. **Classify the target**: iOS companion app, iPad app, macOS productivity app, menu-bar utility, document app, dashboard, or settings-heavy tool.
 2. **Read project rules**: `AGENTS.md`, `CLAUDE.md`, design tokens, SwiftUI theme files, existing components, screenshots, and relevant Swift files.
-3. **Apply gates**: Apple HIG, Linear-style visual rules, SwiftUI/AppKit engineering rules, accessibility, and visual QA.
+3. **Apply gates**: Apple HIG, Linear/Things visual rules, SwiftUI/AppKit engineering rules, accessibility, and visual QA.
 4. **Report concrete issues**: prefer `file:line — issue — fix` when reviewing code.
 5. **Revise in small passes**: preserve behavior; avoid broad rewrites for visual polish.
 6. **Verify visually**: build/run/preview/screenshot when possible; critique the actual rendered UI, not imagined UI.
@@ -23,7 +23,7 @@ Default to an audit-and-iteration loop:
 
 Read these only when needed:
 
-- `references/linear-style-rules.md` — Linear-inspired visual/product principles.
+- `references/linear-style-rules.md` — Linear and Things 3-inspired visual/product principles.
 - `references/apple-platform-rules.md` — Apple HIG + SwiftUI/AppKit implementation rules.
 - `references/visual-qa-loop.md` — screenshot/build/reviewer workflow for coding agents.
 
@@ -61,15 +61,16 @@ Do not implement web-style pseudo-native UI: giant cards everywhere, custom butt
 
 ### 3. Calm-density gate
 
-Linear-style UI is not empty minimalism. It is dense but quiet.
+Linear-style UI is not empty minimalism. Things-style calm is not low-information whitespace. The target is dense but quiet.
 
 Enforce:
 
 - content first; navigation and chrome recede
-- restrained accent color, usually one primary accent per screen
+- restrained semantic color, usually one primary accent per screen
 - warm/neutral grays over saturated backgrounds
 - subtle separators instead of heavy borders
 - hierarchy through spacing, type, alignment, opacity, and grouping
+- clear typography before decorative branding
 - no decorative gradients/shadows unless they clarify depth or state
 
 ### 4. Accessibility gate
@@ -137,6 +138,7 @@ When asked to implement or polish UI:
 ## Anti-patterns to call out bluntly
 
 - “Make it look like Linear” by copying dark backgrounds and purple accents only.
+- “Make it feel like Things” by forcing blue or green brand color onto every primary action.
 - Mobile app that is just the web sidebar squeezed into a phone.
 - Over-carded UI: every element in a rounded rectangle.
 - Heavy borders, heavy shadows, and low-density spacing pretending to be premium.
