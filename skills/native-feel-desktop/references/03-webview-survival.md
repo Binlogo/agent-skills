@@ -64,7 +64,7 @@ webView.perform(Selector(("_doAfterNextPresentationUpdate:")), with: { [weak win
 
 This call schedules a callback for after the next time WebKit hands a rendered frame to the system. Order-front *inside* the callback. The window now appears with content already drawn.
 
-**Caveat:** This API is private. It has been stable for ~10 years and Raycast Beta is shipping with it as of 2026. If Apple removes it, fall back to a fixed 50ms delay after `loadHTMLString` returns.
+**Caveat:** This API is private but long-stable, and ships in production apps (see `07-evidence-raycast.md`). If Apple ever removes it, fall back to a fixed ~50 ms delay after `loadHTMLString` returns.
 
 ---
 

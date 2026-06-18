@@ -1,46 +1,51 @@
 ---
 name: native-feel-desktop
-description: "Design and build cross-platform desktop apps (macOS + Windows) that feel indistinguishable from native: four-layer architecture (native shell + system WebView + Node + Rust), WebKit/WebView2 survival guide, typed IPC, memory accounting, native UI conventions, and Linear/Things 3-inspired product design. Distilled from Raycast 2.0's public deep-dive. Use when choosing Electron vs Tauri vs native shell, building launchers, global-hotkey utilities, system-tray apps, WKWebView/WebView2 wrappers, near-native performance, restrained dense desktop UI, or auditing whether an app truly feels native."
+description: "Architect and build cross-platform desktop apps (macOS + Windows) that feel indistinguishable from native: a native shell hosting the system WebView (WKWebView/WebView2), a Node backend, typed IPC, and an optional Rust core. Use when deciding between Electron / Tauri / a native shell, building launchers or global-hotkey / system-tray utilities, debugging WebView flicker or throttling, or auditing whether an app truly feels native. Run the decision tree first — this stack is wrong for single-platform apps, sub-150 MB / sub-100 ms budgets, or short runways. For visual/product design taste, use calm-dense-design."
 ---
 
 # Native-Feel Desktop
 
-Advise on cross-platform desktop architecture where the app must *feel native* — not a themed Electron app, not a web page in a window. Grounded in Raycast's 2.0 rewrite and reverse-engineering of the shipping `Raycast Beta.app`.
+Advise on cross-platform desktop architecture where the app must *feel native* — not a themed Electron app, not a web page in a window. A native shell (Swift/AppKit on macOS, C#/WPF on Windows) owns windowing, hotkeys, menu bar, materials, and lifecycle, and embeds the **system WebView** purely as a rendering surface for shared React/TypeScript UI. Business logic lives in a long-lived Node process; performance-critical work lives in an optional Rust core exposed via UniFFI. Four runtimes, one declared IPC schema.
 
-Distilled from [yetone/native-feel-skill](https://github.com/yetone/native-feel-skill) (MIT).
+Grounded in a reverse-engineering of a shipping app (`references/07-evidence-raycast.md`); distilled from [yetone/native-feel-skill](https://github.com/yetone/native-feel-skill) (MIT).
 
-## How to use
+## Qualify first — this stack is not for every app
 
-1. **Start with philosophy** — `references/01-philosophy.md` (eight tenets). If a decision contradicts a tenet, cite it by number and explain the trade-off.
-2. **Load only what's needed:**
-   - Architecture / layer boundaries → `references/02-architecture.md`
-   - WebView flicker, throttling, translucency → `references/03-webview-survival.md`
-   - IPC typing across Rust/Swift/C#/TS → `references/04-ipc-contract.md`
-   - Memory numbers / Activity Monitor → `references/05-memory-truths.md`
-   - "Feels like a webpage" audit → `references/06-native-conventions.md`
-   - Raycast shipping evidence → `references/07-evidence-raycast.md`
-   - Dense, restrained product design → `references/08-product-design.md`
-3. **Before recommending this stack** — run `references/decision-tree.md`. Rule it OUT when it doesn't fit.
-4. **Before claiming "feels native"** — run `references/ship-readiness.md` (75-item audit).
+**Before recommending anything, run `references/decision-tree.md` (7 questions).** It rules the architecture *out* for single-platform apps, tight memory (<150 MB) or launch (<100 ms cold) budgets, short runways, and "Electron is fine" polish bars. Concluding "use Electron / build native" is a valid, common outcome — say so directly rather than over-fitting this stack onto a project it doesn't suit.
 
-## One paragraph
+If the tree says proceed, continue below.
 
-A native-feel cross-platform desktop app is a **native shell** (Swift/AppKit on macOS, C#/WPF on Windows) that owns windowing, hotkeys, menu bar, materials, and lifecycle — and embeds the **system WebView** (WKWebView / WebView2) purely as a *rendering surface* for shared React/TypeScript UI. Business logic lives in a long-lived Node process. Performance-critical work lives in Rust, exposed via UniFFI. Four runtimes share one declared IPC schema. Baseline memory is ~400 MB (~150 MB WebView+Node floor); you pay that to halve UI engineering and earn it back through HMR iteration speed.
+## The mental model
+
+Read `references/01-philosophy.md` — eight tenets, each naming a tension and its structural resolution (seam at the rendering surface, one schema many languages, adopt the platform, perception over measurement, iteration loop as product, intentional boundaries, identity as muscle memory, baseline vs margin cost). When a decision feels contested, cite the tenet by number and name the trade-off.
+
+The single most useful test for any cross-platform call: **is this above the rendering surface or below it?** Below (windowing, hotkeys, materials, dialogs) → write it twice in idiomatic native. Above (React tree, business logic, AI) → write it once in TS.
+
+## Load only what the task needs
+
+- Layer boundaries, how many layers *your* app needs → `references/02-architecture.md`
+- WebView flicker, throttling, translucency, IME → `references/03-webview-survival.md`
+- Typed IPC across Rust/Swift/C#/TS (UniFFI, request-vs-event, versioning) → `references/04-ipc-contract.md`
+- What memory numbers mean and which costs you can move → `references/05-memory-truths.md`
+- "Does this feel like a webpage?" audit → `references/06-native-feel-checklist.md`
+- Shipping evidence that the architecture is real → `references/07-evidence-raycast.md`
+
+For visual/product design (density, calm, color restraint), the taste is platform-agnostic and lives in the **`calm-dense-design`** skill — invoke it. This skill owns architecture and engineering, not taste.
 
 ## Core anti-patterns — stop and ask
 
-- **"Electron + custom theme"** → Cannot get Liquid Glass / acrylic / true vibrancy without forking. See `references/02-architecture.md`.
-- **"Tauri for native feel"** → Same control-loss as Electron; less mature. OK for utilities, not polish-critical apps.
-- **"Native UI in Swift/C#, share only logic"** → Two UI codebases forever. Use WebView-as-renderer instead.
-- **"WebKit throttling — spin our own loop"** → Fix with two WKWebView flags. See `references/03-webview-survival.md` § hidden window throttling.
-- **"400 MB is too much"** → Probably wrong measurement. See `references/05-memory-truths.md` first.
-- **"Hand-write IPC types per language"** → Drift within a sprint. Use UniFFI or a single IDL. See `references/04-ipc-contract.md`.
-- **`cursor: pointer` on rows** → Telegraphs web app. See `references/06-native-conventions.md`.
-- **"Make it look like Linear/Things"** → Brand skinning is not native feel. Borrow density, hierarchy, restraint, and semantic color from `references/08-product-design.md`.
+- **"Electron + custom theme"** → can't get true vibrancy / Liquid Glass / acrylic without forking. See `02-architecture.md`.
+- **"Tauri for native feel"** → same control-loss as Electron, less mature. Fine for utilities, not polish-critical apps.
+- **"Native UI in Swift/C#, share only logic"** → two UI codebases forever. Use WebView-as-renderer instead.
+- **"WebKit throttling — let's spin our own loop"** → it's two WKWebView flags. See `03-webview-survival.md`.
+- **"400 MB is too much"** → probably a measurement error. Read `05-memory-truths.md` before optimizing.
+- **"Hand-write IPC types per language"** → drift within a sprint. One schema, generated clients. See `04-ipc-contract.md`.
+- **`cursor: pointer` on rows** → telegraphs web app. See `06-native-feel-checklist.md`.
+- **"Make it look like Linear/Things"** → brand skinning is not native feel. Borrow density/restraint via `calm-dense-design`.
 
 ## Output style
 
-- Quote the applicable tenet from `references/01-philosophy.md` (e.g., *T3 — adopt the platform; don't compete with it*).
-- Cite file and section, not the whole skill.
+- Quote the applicable tenet (e.g. *T3 — adopt the platform; don't compete with it*).
+- Cite a file and section, not the whole skill.
 - Name what the user **gives up** for each recommendation — no free wins.
-- If unsure this architecture applies, run `references/decision-tree.md` first. Concluding "use Electron" is valid.
+- If unsure the architecture applies, run the decision tree first. "Use Electron" is a valid conclusion.

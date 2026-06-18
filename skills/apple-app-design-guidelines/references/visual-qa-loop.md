@@ -31,18 +31,13 @@ If no screenshot path exists, ask the implementing agent to add one or provide m
 
 ## What to critique
 
-Do not say only “looks good.” Always check:
+Do not say only “looks good.” Run the `calm-dense-design` self-check (primary task obvious, chrome recedes, alignment, density vs. inflated padding, color carries state) against the screenshot, then add the Apple/render-specific checks:
 
-- Is the primary task obvious?
-- Does secondary chrome recede?
-- Are rows/cards aligned consistently?
-- Is spacing compact but breathable?
-- Are labels readable at expected size?
-- Are icon-only actions understandable?
-- Does accent color appear too often?
-- Does dark mode feel harsh or muddy?
-- Are controls reachable/clickable?
-- Does the screen still work with longer copy?
+- Are icon-only actions understandable without a label visible?
+- Does dark mode feel harsh (pure black/white) or muddy?
+- Are controls reachable by thumb on iPhone / clickable on macOS?
+- Does the screen still hold up with longer copy and the largest Dynamic Type size?
+- Are platform conventions (nav, toolbar, sidebar, sheets) used where expected?
 
 ## Visual reviewer output
 

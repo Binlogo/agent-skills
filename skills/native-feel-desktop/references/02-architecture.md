@@ -73,7 +73,7 @@ This is the structural recommendation. Every layer exists because removing it lo
 - Lets the shell tear down a window's WebView fully on close without disturbing others.
 - Avoids one giant SPA that always pays for everything.
 
-Verified in Raycast Beta: `main-window.html`, `ai-chat-window.html`, `settings-window.html`, `notes-window.html`, `feedback-window.html`, `theme-studio-window.html`, `welcome-window.html` — seven entry points.
+A shipping example uses one HTML entry point per window kind (launcher, AI chat, settings, notes, …); see `07-evidence-raycast.md` for the observed breakdown.
 
 ### Layer 3 — Node backend
 
@@ -85,7 +85,7 @@ Verified in Raycast Beta: `main-window.html`, `ai-chat-window.html`, `settings-w
 **Why a single long-lived process and not per-window backends:** Database connections, network keep-alive, expensive imports, AI session state. Per-window backends would re-pay these costs every time a window opens. Single process amortizes.
 
 **When to use a native `.node` addon vs Rust subprocess:**
-- `.node` addon (Node-API or N-API): for tight, frequent calls from JS where serialization cost dominates. Examples seen in Raycast: `Calculator.node`, `fs-utils.darwin-arm64.node`, `indexer.darwin-arm64.node`, `data.darwin-arm64.node`.
+- `.node` addon (Node-API or N-API): for tight, frequent calls from JS where serialization cost dominates (e.g. a calculator, fs utilities, an indexer — shipping examples in `07-evidence-raycast.md`).
 - Rust subprocess: for long-running work that can be torn down independently, or for work that needs cross-process isolation (e.g., a crashy parser shouldn't kill the backend). Spawn it, talk over stdio with a length-prefixed protocol.
 
 ### Layer 4 — Rust core
@@ -98,15 +98,7 @@ Verified in Raycast Beta: `main-window.html`, `ai-chat-window.html`, `settings-w
 - Anything that has a server counterpart (same Rust crates power your backend service → schema can't drift).
 - Anything that needs subprocess isolation for crash resilience.
 
-**Verified in Raycast Beta:** `libraycast_host.dylib` is a Rust dylib using UniFFI. Its exported metadata symbols spell out the bridge:
-- `Coordinator` (interface): `new`, `start`, `stop`, `send`, `get_state`
-- `EventHandler` (callback interface from Swift back to Rust): `on_backend_log`, `on_failure`, `on_notification`, `on_request`
-- `LogHandler` (callback): `on_log`, `on_panic`
-- `NativeSentryClient` (interface): `new`, `add_breadcrumb`, `set_user_id`, `test_crash`
-- `InboundRequestDestination` (enum): request routing
-- Errors: `RequestError`, `SendError`, `StartError`, `StopError`, `NativeSentryClientError`
-
-This is exactly the pattern this skill recommends. The Rust core is the *coordinator* — it knows how to start/stop the system, route requests between the WebView and Node backend, and bubble events back to the native shell.
+A shipping example (reverse-engineered in `07-evidence-raycast.md`) is a Rust dylib exposing, via UniFFI, a `Coordinator` interface (`start`/`stop`/`send`/`get_state`) plus callback interfaces for events and logs. The Rust core is the *coordinator* — it starts/stops the system, routes requests between the WebView and Node backend, and bubbles events back to the native shell. Model your bridge on this; the symbol-level detail lives in `07`.
 
 ---
 
@@ -122,6 +114,8 @@ You may not need all four. A reduced version:
 | A launcher / search-heavy app | All four. The indexer must be Rust or it will be slow. |
 
 But: each *added* layer also adds a process boundary, an IPC contract, an error path, and a memory cost. Add layers reluctantly. If you can do without Node, skip Node. If your Rust core is 200 LoC, inline it as an `.node` addon instead of a subprocess.
+
+**When to actually add Layer 4 (Rust):** wait until a specific need crosses a threshold you can name — a search index large enough to bloat the JS heap, fuzzy-match latency you can feel while typing, crypto/parsing that heats the CPU, a parser crashy enough to need its own process, or logic that must stay byte-identical with a mobile app or server. Until one of those is real, staying in Node or using a `.node` addon is simpler and you lose nothing.
 
 ---
 

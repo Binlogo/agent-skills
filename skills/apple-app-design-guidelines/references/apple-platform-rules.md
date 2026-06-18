@@ -1,18 +1,10 @@
 # Apple Platform Rules
 
-Use these rules when implementing or reviewing native iOS/macOS UI. They are intentionally practical for coding agents.
+Use these rules when implementing or reviewing native iOS/macOS UI. They are intentionally practical for coding agents. Design *taste* (density, calm, color restraint) is in `calm-dense-design`; this file is the Apple-native *implementation* layer that sits on top of it.
 
 ## Platform baseline
 
-Follow Apple Human Interface Guidelines as the baseline:
-
-- hierarchy
-- harmony
-- consistency
-- accessibility
-- platform conventions
-
-Linear-style polish must sit on top of Apple-native behavior, not replace it.
+Follow Apple Human Interface Guidelines as the baseline: hierarchy, harmony, consistency, accessibility, platform conventions. Calm/dense polish sits *on top of* Apple-native behavior — it never replaces it.
 
 ## iOS rules
 
@@ -68,27 +60,22 @@ Use SwiftUI idiomatically:
 
 ## Design token guidance
 
-Create or reuse semantic tokens:
+Create or reuse semantic tokens instead of scattering literal color/spacing/radius values across views. Names below are an *illustrative* shape, not a required set:
 
 - spacing: `compact`, `regular`, `comfortable`
 - color: `appBackground`, `panelBackground`, `secondaryText`, `hairlineSeparator`, `primaryAccent`
 - radius: `controlRadius`, `panelRadius`, `sheetRadius`
 - typography: `title`, `sectionHeader`, `rowTitle`, `metadata`, `caption`
 
-Do not scatter literal color/spacing/radius values across many views.
+## Accessibility implementation
 
-## Accessibility checklist
+The accessibility *gate* (what to check) is in `decision-gates.md` gate 4 — that's the single source of truth. Implement it with the platform's own affordances rather than reinventing them:
 
-Review every UI change for:
-
-- VoiceOver labels for icon-only controls
-- keyboard access on macOS/iPad
-- focus visibility
-- hit target size
-- Dynamic Type behavior
-- light/dark contrast
-- reduced motion
-- no color-only status encoding
+- icon-only controls → `.accessibilityLabel`; group related elements with `.accessibilityElement(children:)`
+- scalable type → system text styles or `@ScaledMetric`; test the largest Dynamic Type size
+- focus/keyboard on macOS·iPad → `.focusable`, `.focused`, `@FocusState`, and `.keyboardShortcut`
+- motion → gate behind `@Environment(\.accessibilityReduceMotion)`
+- status → pair color with text/shape/SF Symbol, never color alone
 
 ## Build gate
 

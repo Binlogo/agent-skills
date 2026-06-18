@@ -25,7 +25,7 @@ Typical *real* numbers for a mature app like Raycast:
 | Window visible, search active | ~500–700 MB |
 | AI chat with long context | ~800 MB – 1.2 GB |
 
-For comparison, Raycast v1 (pure native AppKit) was 200–300 MB. So **the cross-platform tax is ~150 MB**. You pay it to halve your engineering team's work.
+A pure-native build of the same app runs roughly ~150 MB lighter — so **the cross-platform tax is on the order of ~150 MB**. You pay it to roughly halve UI engineering.
 
 ---
 
@@ -93,7 +93,7 @@ Extensions (third-party plugins) should not load on launch. Load on first invoca
 
 Each window kind has its own HTML entry and its own bundle. The launcher should not load the AI chat's dependencies. The settings page should not pull in the markdown renderer.
 
-Verified in Raycast Beta: seven HTML entry points (`main-window.html`, `ai-chat-window.html`, etc.) with separate JS bundles per entry. The chunk graph is shared (so common modules load once via `modulepreload`), but each window only loads what it needs.
+A shipping example splits into per-window HTML entry points with separate JS bundles, sharing a common chunk graph (loaded once via `modulepreload`) so each window only loads what it needs — see `07-evidence-raycast.md`.
 
 ### 4. Avoid keeping the search index in JS heap
 
@@ -103,7 +103,7 @@ Search indices are the worst things to put in V8 heap. They are *the* feature pe
 
 Image processing, encryption, file scanning in JS heap leaks memory and is slow. Use `.node` addons (Rust or C++ via N-API).
 
-Verified in Raycast Beta backend: `Calculator.node`, `data.darwin-arm64.node`, `fs-utils.darwin-arm64.node`, `indexer.darwin-arm64.node`, plus `SoulverCore.framework` (a *native* math/calculation framework loaded by the Node backend!).
+A shipping example moves calculator, data, fs-utils, and indexer work into `.node` addons, and even loads a native math framework into the Node backend via N-API — see `07-evidence-raycast.md`.
 
 ### 6. Quit Node when idle for long enough
 

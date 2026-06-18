@@ -1,8 +1,10 @@
 # 07 — Evidence: Reverse-Engineering Raycast Beta
 
-This file documents what was found by inspecting the on-disk binary of `Raycast Beta.app` (CFBundleShortVersionString 0.60.0, built with Xcode 17, targeting macOS 26+). Everything in this skill is grounded in observed reality, not theory.
+This file is the skill's one **point-in-time forensic snapshot** — what was found by inspecting an on-disk build of `Raycast Beta.app`. The rest of the skill states patterns generically and points here for proof; this is the only file allowed to carry version numbers, symbol names, and exact file names.
 
-The point: when you advise a user to follow this architecture, you can point to the shipping artifacts of a team that demonstrably did it well.
+> **Read it for the *pattern*, not the literals.** Versions, symbol names, framework names, and the exact window/chunk inventory all drift between releases. The durable claim is "a shipping app wires four layers together with UniFFI" — not any specific string below.
+
+The point: when you advise following this architecture, you can point to the shipping artifacts of a team that demonstrably did it well.
 
 ---
 
@@ -127,19 +129,7 @@ Found at `Resources/macos-app_RaycastDesktopApp.bundle/Contents/Resources/fronte
 - `theme-studio-window.html`
 - `welcome-window.html`
 
-Each entry point preloads ~50 named chunks via `<link rel="modulepreload">`. The chunk graph is shared (e.g., `chunk-LkDJa1bE.js`, `marked.esm-C-12xU_L.js`) — common deps load once across windows that need them.
-
-Many chunk filenames hint at the feature surface:
-- `dictation-hud-store-…js` — dictation overlay
-- `transcription-styles-store-…js` — audio transcription
-- `auto-quit-rules-…js`
-- `calendar-extension-…js`, `notes-extension-…js`
-- `meeting-slack-…js`
-- `lowlight-…js` — syntax highlighting (browser-side, not Rust)
-- `marked.esm-…js` — markdown rendering
-- `synced-store-…js` — cross-window state sync
-
-The CSS files reveal Liquid Glass / Tahoe targeting (`tahoe-DJgQPeAO.js`).
+Each entry point preloads dozens of named chunks via `<link rel="modulepreload">`, over a *shared* chunk graph — common deps (markdown rendering, syntax highlighting, a cross-window synced store) load once across the windows that need them. Chunk filenames map cleanly onto feature surfaces (dictation overlay, transcription, calendar/notes extensions, theme targeting), confirming features are code-split per surface rather than bundled into one blob.
 
 **Lesson:** Single React codebase, multiple HTML entry points, shared chunk graph. Don't ship one giant SPA — ship a multi-bundle app where each window pays only for what it uses.
 
