@@ -46,6 +46,19 @@ choosing Electron vs native shell, building launchers, or auditing native feel.
 npx skills add Binlogo/agent-skills/native-feel-desktop
 ```
 
+### tidy-up-workspace
+
+Safely reorganize the `~/Workspace` tree — move or rename category/repo
+directories and relocate, consolidate, or repair git worktrees without breaking
+their links or losing uncommitted work. Covers a read-only survey, atomic move,
+ordered repair (externals → internals → prune last), orphan recovery after an
+over-eager `git worktree prune`, and verification. Use when tidying or migrating
+`~/Workspace` or enforcing the `<category>/<repo>-worktrees/<branch>` convention.
+
+```sh
+npx skills add Binlogo/agent-skills/tidy-up-workspace
+```
+
 ## Authoring
 
 The canonical checkout lives at `~/.local/share/agent-skills` (parallel to
