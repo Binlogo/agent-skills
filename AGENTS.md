@@ -14,6 +14,7 @@ skills/<skill-name>/
 install.sh          # author-side activation: phase 1 symlinks authored skills,
                     #   phase 2 replays consumed.skills via the skills CLI
 consumed.skills     # declared third-party skills (one owner/repo[#ref] [skill …] per line)
+consumed.lock.json  # resolved snapshot of consumed skills (audit/rollback; not enforced)
 README.md           # skill index + install command
 AGENTS.md           # this file
 ```
@@ -57,6 +58,14 @@ Two audiences, two paths:
 *use* but don't author — through `npx skills add -g`, so one checkout reproduces
 the entire skill set. The CLI still fetches/updates consumed skills; `consumed.skills`
 just declares them reproducibly. Add a `#ref` after a source to pin it.
+
+`consumed.lock.json` is a committed **snapshot** of the resolved consumed set
+(copied from `~/.agents/.skill-lock.json`): exact sources, skill folders, and
+content hashes at last sync. It is **audit/rollback only** — `npx skills add -g`
+does not read a lockfile (only the project-scoped `experimental_install` does),
+so installs still track latest. Refresh it deliberately: `skills update -g`, then
+`cp ~/.agents/.skill-lock.json consumed.lock.json`, then commit — so version
+movement shows up in `git diff` instead of drifting silently.
 
 The canonical checkout lives at `~/.local/share/agent-skills`, parallel to
 chezmoi's `~/.local/share/chezmoi`. A fresh machine is bootstrapped by chezmoi:
