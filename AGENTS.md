@@ -11,12 +11,12 @@ skills/<skill-name>/
   SKILL.md          # required entry point
   references/       # optional, loaded on demand
   scripts/          # optional helper scripts
+install.sh          # author-side activation (symlinks skills into agent dirs)
 README.md           # skill index + install command
 AGENTS.md           # this file
-docs/brainstorms/   # design notes (not shipped as skills)
 ```
 
-Nothing else belongs at the repo root.
+Keep it lean — nothing else belongs at the repo root.
 
 ## Skill rules
 
@@ -39,6 +39,19 @@ Nothing else belongs at the repo root.
 
 ## Install model
 
-Distribution is handled entirely by the [skills.sh](https://www.skills.sh/) CLI
-(`npx skills add <owner/repo>`). The repo ships no sync, symlink, or copy
-scripts. To make a new skill installable, commit it under `skills/` and push.
+Two audiences, two paths:
+
+- **Consumers** install with the [skills.sh](https://www.skills.sh/) CLI:
+  `npx skills add Binlogo/agent-skills`. The CLI *copies* skills into each
+  detected agent — right for read-only use.
+- **The author** (you, on your own machines) runs `./install.sh`. The CLI's
+  copy model makes local edits go stale until `skills update`; the script
+  *symlinks* each skill into the shared `~/.agents/skills` hub (and into
+  `~/.claude/skills`), so edits in this repo are live. Read `install.sh` for
+  the exact linking model.
+
+The canonical checkout lives at `~/.local/share/agent-skills`, parallel to
+chezmoi's `~/.local/share/chezmoi`. A fresh machine is bootstrapped by chezmoi:
+a `run_onchange` script clones this repo there and runs `./install.sh`. chezmoi
+*orchestrates* but never *owns* these files — they stay independently versioned
+here. To add a skill: drop it under `skills/`, run `./install.sh`, commit, push.

@@ -21,6 +21,10 @@ npx skills add Binlogo/agent-skills/apple-app-design-guidelines
 The skills.sh CLI auto-detects your installed agents and writes the skills into
 each one. No manual syncing required.
 
+> Editing these skills yourself? Don't use the CLI — it installs *copies*, so
+> your edits go stale. Clone to `~/.local/share/agent-skills` and run
+> `./install.sh` to symlink them live. See [Authoring](#authoring).
+
 ## Available skills
 
 ### apple-app-design-guidelines
@@ -43,5 +47,17 @@ npx skills add Binlogo/agent-skills/native-feel-desktop
 ```
 
 ## Authoring
+
+The canonical checkout lives at `~/.local/share/agent-skills` (parallel to
+chezmoi). Activate skills locally with live symlinks:
+
+```sh
+git clone https://github.com/Binlogo/agent-skills.git ~/.local/share/agent-skills
+cd ~/.local/share/agent-skills && ./install.sh
+```
+
+`install.sh` symlinks each skill into `~/.agents/skills` (read by Codex, Cursor,
+Gemini, …) and `~/.claude/skills`, so edits here take effect immediately. Re-run
+it after adding a skill. 
 
 Conventions for adding or editing skills live in [`AGENTS.md`](AGENTS.md).
