@@ -65,3 +65,43 @@ for s in "$src"/*/; do
 done
 
 printf 'agent-skills: linked %d skill(s), skipped %d  (hub: %s)\n' "$linked" "$skipped" "$hub"
+
+# --- phase 2: consumed third-party skills (declarative, CLI-fetched) ---------
+# Reproducibility lives in ./consumed.skills, not in an imperative install. The
+# skills CLI still fetches/updates; this just replays the committed manifest.
+# Additive + best-effort: a failing source warns and continues; missing npx
+# warns and skips, so phase 1 (authored symlinks above) always still succeeds.
+manifest="${repo_dir}/consumed.skills"
+if [ -f "$manifest" ]; then
+    if ! command -v npx >/dev/null 2>&1; then
+        printf 'agent-skills: npx not found — skipping consumed skills (re-run after node is on PATH)\n' >&2
+    else
+        consumed=0
+        while IFS= read -r line || [ -n "$line" ]; do
+            case "$line" in ''|'#'*) continue ;; esac
+            line=${line%%#*}                 # strip inline comments
+            # shellcheck disable=SC2086      # intentional word-split into fields
+            set -- $line
+            [ "$#" -ge 1 ] || continue
+            source=$1
+            shift
+            # `-s` takes space-separated skill names ("$@"), NOT a comma list.
+            # stdin from /dev/null: the CLI would otherwise inherit (and drain)
+            # this loop's stdin — the manifest fd — and exit after one source.
+            if [ "$#" -ge 1 ]; then
+                if npx skills add -g "$source" -s "$@" -y </dev/null; then
+                    consumed=$((consumed + 1))
+                else
+                    printf 'warn  consumed: %s failed (continuing)\n' "$source" >&2
+                fi
+            else
+                if npx skills add -g "$source" -y </dev/null; then
+                    consumed=$((consumed + 1))
+                else
+                    printf 'warn  consumed: %s failed (continuing)\n' "$source" >&2
+                fi
+            fi
+        done < "$manifest"
+        printf 'agent-skills: processed %d consumed source(s) from consumed.skills\n' "$consumed"
+    fi
+fi

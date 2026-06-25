@@ -11,12 +11,14 @@ skills/<skill-name>/
   SKILL.md          # required entry point
   references/       # optional, loaded on demand
   scripts/          # optional helper scripts
-install.sh          # author-side activation (symlinks skills into agent dirs)
+install.sh          # author-side activation: phase 1 symlinks authored skills,
+                    #   phase 2 replays consumed.skills via the skills CLI
+consumed.skills     # declared third-party skills (one owner/repo[#ref] [skill …] per line)
 README.md           # skill index + install command
 AGENTS.md           # this file
 ```
 
-Keep it lean — nothing else belongs at the repo root.
+Keep it lean — only these belong at the repo root.
 
 ## Skill rules
 
@@ -50,8 +52,16 @@ Two audiences, two paths:
   `~/.claude/skills`), so edits in this repo are live. Read `install.sh` for
   the exact linking model.
 
+`./install.sh` runs in two phases: **phase 1** symlinks the authored `skills/*`
+(live edits); **phase 2** replays `consumed.skills` — the third-party skills you
+*use* but don't author — through `npx skills add -g`, so one checkout reproduces
+the entire skill set. The CLI still fetches/updates consumed skills; `consumed.skills`
+just declares them reproducibly. Add a `#ref` after a source to pin it.
+
 The canonical checkout lives at `~/.local/share/agent-skills`, parallel to
 chezmoi's `~/.local/share/chezmoi`. A fresh machine is bootstrapped by chezmoi:
 a `run_onchange` script clones this repo there and runs `./install.sh`. chezmoi
-*orchestrates* but never *owns* these files — they stay independently versioned
-here. To add a skill: drop it under `skills/`, run `./install.sh`, commit, push.
+*orchestrates* only this repo — it never *owns* these files or learns about
+individual skills. To add an authored skill: drop it under `skills/`, run
+`./install.sh`, commit, push. To add a consumed skill: add a line to
+`consumed.skills`, run `./install.sh`, commit, push.

@@ -56,8 +56,16 @@ git clone https://github.com/Binlogo/agent-skills.git ~/.local/share/agent-skill
 cd ~/.local/share/agent-skills && ./install.sh
 ```
 
-`install.sh` symlinks each skill into `~/.agents/skills` (read by Codex, Cursor,
-Gemini, …) and `~/.claude/skills`, so edits here take effect immediately. Re-run
-it after adding a skill. 
+`install.sh` runs two phases:
+
+1. **Authored skills** — symlinks each `skills/*` into `~/.agents/skills` (read by
+   Codex, Cursor, Gemini, …) and `~/.claude/skills`, so edits here take effect
+   immediately. Re-run after adding a skill.
+2. **Consumed skills** — replays [`consumed.skills`](consumed.skills) (third-party
+   skills, one `owner/repo[#ref] [skill …]` per line) via `npx skills add -g`, so a
+   single checkout reproduces the whole skill set. To add one: edit `consumed.skills`,
+   run `./install.sh`, commit.
+
+This repo is the single declaration point; chezmoi orchestrates only this repo.
 
 Conventions for adding or editing skills live in [`AGENTS.md`](AGENTS.md).
