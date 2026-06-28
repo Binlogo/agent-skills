@@ -4,7 +4,7 @@
 
 larksuite/cli                                                          # all lark-* skills
 kepano/obsidian-skills      defuddle json-canvas obsidian-bases obsidian-cli obsidian-markdown
-mattpocock/skills           grill-me grill-with-docs improve-codebase-architecture prototype tdd to-issues to-prd triage
+mattpocock/skills           grill-me grilling handoff resolving-merge-conflicts
 anthropics/skills           skill-creator
 anthropics/claude-plugins-official   claude-md-improver
 shadcn/improve              improve
